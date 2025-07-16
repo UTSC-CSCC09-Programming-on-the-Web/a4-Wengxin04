@@ -1,0 +1,436 @@
+# Github Copilot Prompt: Generate an OpenAPI 3.0 YAML specification
+# describing the endpoints in the routers folder for images and comments.
+openapi: 3.0.0
+info:
+  title: Web Gallery API
+  version: 1.0.0
+  description: RESTful API for managing images and comments.
+
+servers:
+  - url: http://localhost:3000/api
+
+paths:
+  /images:
+    post:
+      summary: Upload a new image
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                title:
+                  type: string
+                author:
+                  type: string
+              required: [image, title, author]
+      responses:
+        "200":
+          description: Image uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Image"
+        "400":
+          description: Image file, title, or author missing
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingFile:
+                  value: { error: "Image file is required" }
+                missingFields:
+                  value: { error: "Title and author are required" }
+        "500":
+          description: Failed to create image
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Failed to create image"
+    get:
+      summary: Get images with pagination
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: List of images
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  images:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Image"
+        "500":
+          description: Failed to fetch images
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Failed to fetch images"
+
+  /images/count:
+    get:
+      summary: Get total count of images
+      responses:
+        "200":
+          description: Image count
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+        "500":
+          description: Failed to get image count
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Failed to get image count"
+
+  /images/{id}:
+    get:
+      summary: Get image metadata by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Image metadata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Image"
+        "404":
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Image not found"
+        "500":
+          description: Failed to get image
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Failed to get image"
+    delete:
+      summary: Delete an image by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Image deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Image"
+        "404":
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Image not found"
+        "500":
+          description: Failed to delete image
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Failed to delete image"
+
+  /images/{id}/index:
+    get:
+      summary: Get the index of an image by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Image index
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  index:
+                    type: integer
+        "400":
+          description: Invalid image ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Invalid image ID"
+        "404":
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Image not found"
+        "500":
+          description: Failed to get image index
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Failed to get image index"
+
+  /images/{id}/file:
+    get:
+      summary: Get the actual image file by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Image file
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Image not found"
+        "500":
+          description: Failed to get image file
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Failed to get image file"
+
+  /images/{id}/comments:
+    post:
+      summary: Add a comment to an image
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                author:
+                  type: string
+                content:
+                  type: string
+              required: [author, content]
+      responses:
+        "200":
+          description: Comment added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+        "400":
+          description: Author or comment missing
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Author and comment are required"
+        "404":
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Image not found"
+        "500":
+          description: Failed to add comment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Failed to add comment"
+    get:
+      summary: Get comments for an image (paginated)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: List of comments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  comments:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Comment"
+                  totalCount:
+                    type: integer
+        "404":
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Image not found"
+        "500":
+          description: Failed to fetch comments or count comments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                fetchComments:
+                  value:
+                    error: "Failed to fetch comments"
+                countComments:
+                  value:
+                    error: "Failed to count comments"
+                getImage:
+                  value:
+                    error: "Failed to get image for comments"
+
+  /comments/{id}:
+    delete:
+      summary: Delete a comment by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Comment deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+        "404":
+          description: Comment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Comment not found"
+        "500":
+          description: Failed to delete comment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Failed to delete comment"
+
+components:
+  schemas:
+    Image:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        author:
+          type: string
+        filename:
+          type: string
+        mimetype:
+          type: string
+        size:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+        author:
+          type: string
+        content:
+          type: string
+        ImageId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Error:
+      type: object
+      properties:
+        error:
+          type: string

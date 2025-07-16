@@ -1,0 +1,25 @@
+.comment-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1em;
+  position: relative;
+}
+
+.comment-list-li {
+  padding: 12px;
+  border-bottom: 1px solid #ccc;
+  position: relative;
+  background-color: #f9f9f9;
+}
+
+.comment-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.comment-login-message {
+  margin: 10px 0;
+  color: #cc0000;
+  font-style: italic;
+}
