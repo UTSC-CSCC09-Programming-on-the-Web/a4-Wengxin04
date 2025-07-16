@@ -7,7 +7,7 @@ export function render(container) {
       </div>
     </header>
 
-    <main class="row">
+    <main class="row main-page">
       <div class="col-12">
         <h1>Credits</h1>
 
@@ -40,6 +40,18 @@ export function render(container) {
               target="_blank"
               rel="noopener noreferrer"
             >Vecteezy</a>
+          </li>
+        </ul>
+
+        <h2>Images</h2>
+        <ul>
+          <li>
+            Empty gallery image from
+            <a
+              href="https://stock.adobe.com/ca/search/images?k=empty+gallery+wall&asset_id=475356184"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Adobe Stock</a>
           </li>
         </ul>
       </div>

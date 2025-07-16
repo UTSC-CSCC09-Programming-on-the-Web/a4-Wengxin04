@@ -23,6 +23,8 @@
   position: relative;
   height: 600px;
   overflow: hidden;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .image-display-section {
@@ -74,6 +76,14 @@
   font-size: 24px;
   color: #333;
   cursor: pointer;
+  z-index: 10000;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .comment-list li {
@@ -128,4 +138,117 @@
   margin-top: 8px;
   font-size: 0.9rem;
   color: gray;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    height: auto;
+    max-height: 95vh;
+    padding: 16px;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .image-display-section {
+    flex: none;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 16px;
+  }
+
+  .comment-section {
+    flex: none;
+    width: 100%;
+    padding: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .modal-img {
+    max-height: 250px;
+    width: 100%;
+    object-fit: contain;
+  }
+
+  .image-controls {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .pagination-buttons {
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .pagination-buttons button {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+
+  .close-btn {
+    top: 8px;
+    right: 8px;
+    font-size: 20px;
+    width: 28px;
+    height: 28px;
+  }
+
+  #commentsList {
+    max-height: 200px;
+  }
+}
+
+@media (max-width: 576px) {
+  .modal-content {
+    width: 98%;
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .image-display-section {
+    padding: 8px;
+  }
+
+  .comment-section {
+    padding: 8px;
+    max-height: 250px;
+  }
+
+  .modal-img {
+    max-height: 200px;
+  }
+
+  .pagination-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .pagination-buttons button {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .image-controls {
+    gap: 8px;
+  }
+
+  .close-btn {
+    top: 4px;
+    right: 4px;
+    font-size: 18px;
+    width: 24px;
+    height: 24px;
+  }
+
+  #commentsList {
+    max-height: 150px;
+  }
+
+  .modal-image-counter {
+    font-size: 0.8rem;
+    margin: 8px 0;
+  }
 }

@@ -154,7 +154,9 @@ window.apiService = (function () {
       body: JSON.stringify({ username, password }),
     }).then(function (res) {
       if (!res.ok) {
-        throw new Error("Failed to sign up");
+        return res.json().then(function (data) {
+          throw new Error(data.error || "Failed to sign up");
+        });
       }
       return res.json();
     });
@@ -169,16 +171,19 @@ window.apiService = (function () {
       },
       body: JSON.stringify({ username, password }),
     }).then(function (res) {
-      if (!res.ok) {
-        throw new Error("Failed to sign in");
-      }
-      return res.json();
+      return res.json().then(function (data) {
+        if (!res.ok) {
+          throw new Error(data.error || "Failed to sign in");
+        }
+        return data;
+      });
     });
   };
 
   // sign out a user
   module.signOut = function (token) {
     return fetch("/api/users/signout", {
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },

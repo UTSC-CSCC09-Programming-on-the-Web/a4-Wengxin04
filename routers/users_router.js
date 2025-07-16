@@ -22,7 +22,7 @@ userRouter.post("/signup", (req, res) => {
   User.findOne({ where: { username } })
     .then((existingUser) => {
       if (existingUser) {
-        return res.status(409).json({ error: "Username already exists." });
+        throw new Error("UsernameExists");
       }
       const salt = bcrypt.genSaltSync(10);
       const hashedPassword = bcrypt.hashSync(password, salt);
@@ -30,24 +30,23 @@ userRouter.post("/signup", (req, res) => {
     })
     .then((user) => {
       const token = generateToken(user.id);
-      user.token = token;
       createdUser = user;
-      return user.save();
-    })
-    .then((user) => {
       return Gallery.create({
         UserId: user.id,
         name: `${user.username}'s Gallery`,
-      });
-    })
-    .then((gallery) => {
-      res.status(200).json({
-        userId: createdUser.id,
-        galleryId: gallery.id,
-        token: createdUser.token,
+      }).then((gallery) => {
+        res.status(200).json({
+          userId: user.id,
+          galleryId: gallery.id,
+          token,
+        });
       });
     })
     .catch((err) => {
+      if (err.message === "UsernameExists") {
+        return res.status(409).json({ error: "Username already exists." });
+      }
+
       console.error("Sign up error:", err);
       res.status(500).json({ error: "Failed to sign up user." });
     });
@@ -63,26 +62,32 @@ userRouter.post("/signin", (req, res) => {
       .json({ error: "Username and password are required." });
   }
 
+  let authenticatedUser = null;
+
   User.findOne({ where: { username } })
     .then((user) => {
       if (!user || !bcrypt.compareSync(password, user.password)) {
-        return res.status(401).json({ error: "Invalid username or password." });
+        throw new Error("INVALID_CREDENTIALS");
       }
       const token = generateToken(user.id);
       user.token = token;
+      authenticatedUser = user;
       return user.save();
     })
     .then((user) =>
       res.status(200).json({ userId: user.id, token: user.token })
     )
     .catch((err) => {
+      if (err.message === "INVALID_CREDENTIALS") {
+        return res.status(401).json({ error: "Invalid username or password." });
+      }
       console.error("Sign in error:", err);
       res.status(500).json({ error: "Failed to sign in user." });
     });
 });
 
 // sign out a user
-userRouter.get("/signout", authenticateToken, (req, res) => {
+userRouter.post("/signout", authenticateToken, (req, res) => {
   User.findByPk(req.userId)
     .then((user) => {
       if (!user) {

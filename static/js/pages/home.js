@@ -11,7 +11,7 @@ export function render(container) {
       </div>
     </header>
 
-    <main class="row">
+    <main class="row main-page">
       <div class="col-12">
         <h2>Explore Public Galleries</h2>
         <div id="galleryList" class="gallery-list"></div>
@@ -38,7 +38,22 @@ export function init(container) {
       .getGalleries(page, limit)
       .then(({ galleries, totalPages, currentPage: serverPage }) => {
         const listEl = container.querySelector("#galleryList");
+        const paginationEl = container.querySelector(".pagination-controls");
         listEl.innerHTML = "";
+
+        if (galleries.length === 0) {
+          listEl.innerHTML = `
+            <div class="empty-gallery">
+              <p class="empty-text">No galleries available yet.</p>
+              <p class="empty-suggestion">Be the first to create a gallery by signing up!</p>
+            </div>
+          `;
+          paginationEl.style.display = "none";
+          return;
+        }
+
+        // Show pagination controls when there are galleries
+        paginationEl.style.display = "block";
 
         galleries.forEach((g) => {
           const div = document.createElement("div");
@@ -62,6 +77,7 @@ export function init(container) {
       .catch(() => {
         container.querySelector("#galleryList").innerHTML =
           "<p>Failed to load galleries.</p>";
+        container.querySelector(".pagination-controls").style.display = "none";
       });
   }
 

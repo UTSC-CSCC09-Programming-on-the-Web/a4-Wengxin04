@@ -7,7 +7,7 @@ export function render(container) {
       </div>
     </header>
 
-    <main class="row">
+    <main class="row main-page">
       <div class="col-12">
         <form class="form login-form">
           <input
@@ -30,6 +30,7 @@ export function render(container) {
             <button type="button" class="btn login-btn sign-up-btn">Sign up</button>
           </div>
         </form>
+        <div class="error-message invisible">Error goes here</div>
       </div>
     </main>
   `;
@@ -45,6 +46,7 @@ export function init(container) {
     signUpBtn: container.querySelector(".sign-up-btn"),
     usernameInput: container.querySelector("input[name='username']"),
     passwordInput: container.querySelector("input[name='password']"),
+    errorMessage: container.querySelector(".error-message"),
   };
 
   function disableButtons(disabled) {
@@ -53,11 +55,22 @@ export function init(container) {
   }
 
   function handleError(message) {
-    alert(message);
+    if (dom.errorMessage) {
+      dom.errorMessage.textContent = message;
+      dom.errorMessage.style.display = "block";
+    }
+  }
+
+  function clearError() {
+    if (dom.errorMessage) {
+      dom.errorMessage.textContent = "";
+      dom.errorMessage.style.display = "none";
+    }
   }
 
   function signIn(event) {
     event.preventDefault();
+    clearError();
     setUsername(dom.usernameInput.value);
     setPassword(dom.passwordInput.value);
     setLoading(true);
@@ -80,6 +93,7 @@ export function init(container) {
 
   function signUp(event) {
     event.preventDefault();
+    clearError();
     setUsername(dom.usernameInput.value);
     setPassword(dom.passwordInput.value);
     setLoading(true);
