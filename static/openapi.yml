@@ -8,6 +8,9 @@ info:
 
 servers:
   - url: http://localhost:3000/api
+    description: Local development server
+  - url: https://webgallery.vianvian.store/api
+    description: Production server
 
 paths:
   /images:
