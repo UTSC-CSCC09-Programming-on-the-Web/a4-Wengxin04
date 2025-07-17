@@ -71,7 +71,7 @@ export function render(container) {
       <div class="modal-content row">
         <span id="closeModal" class="close-btn">&times;</span>
 
-        <div class="col-6 image-display-section">
+        <div class="col-6 col-sm-12 image-display-section">
           <div class="image-info">
             <img id="modalImage" src="" alt="Image" class="modal-img" />
             <p><strong>Title:</strong> <span id="modalImageTitle"></span></p>
@@ -93,7 +93,7 @@ export function render(container) {
           </div>
         </div>
 
-        <div id="commentSection" class="col-6 comment-section">
+        <div id="commentSection" class="col-6 col-sm-12 comment-section">
           <h2>Comments</h2>
           <div id="loginToViewComments" class="comment-login-message hidden">
             Please <a href="#login">sign in</a> to view and post comments.
